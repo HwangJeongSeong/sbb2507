@@ -1,9 +1,14 @@
 package com.mysite.sbb;
 
+import com.mysite.sbb.answer.Answer;
+import com.mysite.sbb.answer.AnswerRepository;
+import com.mysite.sbb.question.Question;
+import com.mysite.sbb.question.QuestionRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.annotation.Rollback;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +23,8 @@ class SbbApplicationTests {
 	@Autowired
 	private QuestionRepository questionRepository;
 
+	@Autowired
+	private AnswerRepository answerRepository;
 
 	@Test
 	void testJpa() {
@@ -52,6 +59,7 @@ class SbbApplicationTests {
 			assertEquals("sbb가 무엇인가요?", q.getSubject());
 		}
 	}
+
 	@Test
 	void testJpa4() {
 		Question q = this.questionRepository.findBySubject("sbb가 무엇인가요?");
@@ -91,9 +99,6 @@ class SbbApplicationTests {
 		assertEquals(1, this.questionRepository.count());
 	}
 
-	@Autowired
-	private AnswerRepository answerRepository;
-
 	@Test
 	void testJpa9() {
 		Optional<Question> oq = this.questionRepository.findById(2);
@@ -108,16 +113,18 @@ class SbbApplicationTests {
 	}
 
 	@Test
-	void testJpa10() {
+
+	void testJpa010() {
 		Optional<Answer> oa = this.answerRepository.findById(1);
 		assertTrue(oa.isPresent());
 		Answer a = oa.get();
 		assertEquals(2, a.getQuestion().getId());
 	}
 
-	@Transactional
 	@Test
-	void testJpa11() {
+	@Transactional
+	@Rollback(false)
+	void testJpa011() {
 		Optional<Question> oq = this.questionRepository.findById(2);
 		assertTrue(oq.isPresent());
 		Question q = oq.get();
